@@ -1,0 +1,105 @@
+# *
+# * Modify this file and rename it as config.yaml
+# *
+system:
+  ssl: false
+  debug: true
+  port: 8000
+  timeout: 10
+  # ! this is just for temporary testing, to ease on-the-fly switching between keys
+  # ! In production the proxy key should ONLY be set in the environment variable SANDJAB_PROXY_KEY
+  masterkey: XXXXXXXXXXXXXXXXXXXXX 
+
+cerbere:
+  # maximum number of tries before blocking an ip address (optional, default to 3)
+  max_tries: 5
+  # IP address Whitelist and blacklist (optional)
+  whitelist: # a list of ip addresses
+    - X.Y.Z.T 
+    - A.B.C.D
+  blacklist: []
+
+targets:
+  # Name of the target to use by default if no target is specified in request header (mandatory)
+  # Must match the name of one of the targets defined below
+  default: openai
+
+  # List of targets
+  # * url is mandatory and is the base url of the target
+  #
+  # * if an api key is needed to acces the target you should provide either a key or and envkey:
+  #   - if a key is provided, the value of the key will be used as the api key
+  #   - if an envkey is provided, the value of the "envkey" environment variable will be used as the api key
+  #   - if both are provided, the key value will be used as the api key, and the envkey will be ignored
+  # !   In production, only use envkey!!!
+  #
+  # * preserveMethod: during http permanent redirections (301), POST method is normally converted to GET, which may be a problem
+  # *                 if the target endpoint only supports POST. If preserveMethod is set to true,
+  # *                 the original method is preserved (optional, default to false)
+  #
+  # * mapping is mandatory and defines the supported incoming endpoints:
+  #   - Each mapping entry defines how to map an incoming endpoint path
+  #   - endpoints not defined here will be rejected with a 404 HTTP error
+  #   - Each mapping entry can be:
+  #     - empty: the incoming endpoint path will be used as the target endpoint path, with no transcoding (pass through)
+  #     - a string: the incoming endpoint path will be mapped to the target endpoint path, with no transcoding
+  #     - an object, with the following properties:
+  #       - path: the target endpoint path to use (optional, default to the incoming endpoint path)
+  #       - in: the transcoding to apply to the incoming request body (optional, default to identity)
+  #       - out: the transcoding to apply to the target response body (optional, default to identity)
+  #
+  # TODO: Add HTTP Method filtering because now POST, GET and INFO are (hopefully gracefully) handled in the same way
+
+  # * OpenAI official API
+  openai: 
+    url: https://api.openai.com/v1
+    envkey: YOUR_OPENAI_API_KEY_ENVIRONMENT_VARIABLE_NAME
+    mapping:
+      /:
+      /models: 
+      /completions:
+      /chat/completions:
+
+  # * An example with Hugging Face TGI serving a Llama2-Chat model on runpod
+  cheepo:
+    url: https://your_runpod_machine-80.proxy.runpod.net
+    preserveMethod: true  # needed to pass through cloudflare
+    mapping:
+      /health:
+      /info:
+      /:
+      /generate:
+      /generate_stream:
+      /metrics:
+
+      /completions:
+        path: /generate
+        in: textReqOpenAItoTGI
+        out: textAnsTGItoOpenAI
+
+      /chat/completions:
+        path: /generate
+        in: chatReqOpenAItoTGI
+        out: chatAnsTGItoOpenAI
+        prompt: llama2
+
+
+# list of prompt templates to transform a list of prompts 
+# with associated roles into a text completion input
+# i.e. a single string input with custom separators
+# TODO (not used yet, for now, prompters are functions)
+
+prompts:
+  HumanResponse:
+    preprompt: "### SYSTEM:\n"
+    start: ""
+    system: "\n### SYSTEM:\n"
+    user: "\n### HUMAN:\n"
+    assistant: "\n### RESPONSE:\n"
+
+  Pygmalion:
+    preprompt: "{{Char}}' Persona: "
+    start: "\n<START>"
+    system: "\nSystem: "
+    user: "\nYou: "
+    assistant: "\n{Char}: "
