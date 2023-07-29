@@ -37,7 +37,7 @@ openai.api_base = "http://127.0.0.1:8000"
 openai.api_key = os.getenv("SANDJAB_PROXY_KEY")
 
 # * Specify the proxy target
-TARGET = "loic"
+TARGET = "openai"
 
 CONTEXT = """You are Bob, a very polite and helpfull assistant. Always answer as helpfully as possible, while being safe. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."""
 
