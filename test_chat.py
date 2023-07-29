@@ -25,6 +25,8 @@ SOFTWARE.
 # * This is a minimal chatbot using MooltProxy.
 # * Warning: this is a very simple implementation with no context cycling
 # * for a more comprehensive implementation, use MooltiChat
+# ! you need to install openai package to run this example
+# ! pip install -U openai
 # *
 
 import openai
@@ -35,9 +37,9 @@ openai.api_base = "http://127.0.0.1:8000"
 openai.api_key = os.getenv("SANDJAB_PROXY_KEY")
 
 # * Specify the proxy target
-TARGET = "openai"
+TARGET = "pawan"
 
-CONTEXT = """You are Sandy, a mischevious young woman"""
+CONTEXT = """You are Bob, a very polite and helpfull assistant, always answer as helpfully as possible, while being safe. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."""
 
 
 # function for managing chat history
@@ -72,10 +74,13 @@ def main():
         if user_input.lower() == "exit":
             break
 
-        response, chat_history = generate_chat_response(
-            user_input, chat_history=chat_history
-        )
-        print("ChatBot:", response)
+        try:
+            response, chat_history = generate_chat_response(
+                user_input, chat_history=chat_history
+            )
+            print("ChatBot:", response)
+        except Exception as e:
+            print(e)
 
 
 if __name__ == "__main__":
