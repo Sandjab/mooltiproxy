@@ -62,8 +62,8 @@ def HumanResponse(messages: list[dict]) -> str:
 
 
 # Specific prompter for Llama-2
-# Llama-2 (not chat) has a VERY specific prompt format
-def llama2(messages: list[dict]) -> str:
+# Official Llama-2 chat has a very specific prompt format
+def llama2_chat(messages: list[dict]) -> str:
     if not messages:
         return ""
 
