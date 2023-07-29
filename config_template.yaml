@@ -5,7 +5,7 @@ system:
   ssl: false
   debug: true
   port: 8000
-  timeout: 10
+  timeout: 30
   # ! this is just for temporary testing, to ease on-the-fly switching between keys
   # ! In production the proxy key should ONLY be set in the environment variable SANDJAB_PROXY_KEY
   masterkey: XXXXXXXXXXXXXXXXXXXXX 
