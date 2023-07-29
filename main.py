@@ -393,8 +393,8 @@ if __name__ == "__main__":
     G_master_key = config["masterkey"]
     G_timeout = config["system"]["timeout"]
 
-    if G_debug:
-        utils.debug("Configuration:\n" + json.dumps(config, indent=2))
+    # if G_debug:
+    #     utils.debug("Configuration:\n" + json.dumps(config, indent=2))
 
     # Create the Cerbere instance
     cerbere = Cerbere(config["cerbere"])
