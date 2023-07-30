@@ -61,6 +61,18 @@ def HumanResponse(messages: list[dict]) -> str:
     return fromTemplate(messages, template)
 
 
+def Instruct(messages: list[dict]) -> str:
+    template = {
+        "preprompt": "",
+        "start": "",
+        "system": "",
+        "user": ">>>QUESTION<<<",
+        "assistant": ">>>ANSWER<<<",
+    }
+
+    return fromTemplate(messages, template)
+
+
 # Specific prompter for Llama-2
 # Official Llama-2 chat has a very specific prompt format
 def llama2_chat(messages: list[dict]) -> str:
