@@ -68,7 +68,6 @@ def identity(ip: Any, cfg: dict = {}) -> Any:
 # * Input Conversion from an OpenAI text completion request to a TGI text completion request
 def textReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
     """Converts a payload to TGI format"""
-    # TODO Mapping of presence_penalty and frequency_penalty to repetition_penalty
     # TODO Mapping of typical_p
 
     # * Sanity Checks
@@ -81,14 +80,14 @@ def textReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
         "inputs": ip.get("prompt", ""),
         "parameters": {
             "best_of": ip.get("best_of", 1),
-            "decoder_input_details": False,
-            "details": True,
+            "decoder_input_details": True,
+            "details": False,
             "do_sample": False,
             "max_new_tokens": ip.get("max_tokens", 20),
-            "repetition_penalty": 1.03,
+            "repetition_penalty": ip.get("frequency_penalty", 1.03),
             "return_full_text": False,
             "seed": 0,
-            "stop": ip.get("stop", ["\n"]),
+            "stop": ip.get("stop", []),
             "temperature": ip.get("temperature", 0.5),
             "top_k": ip.get("top_k", 10),
             "top_p": ip.get("top_p", 0.95),
@@ -113,14 +112,19 @@ def textAnsTGItoOpenAI(ip: Any, cfg: dict = {}) -> Any:
         "none": "none",
     }
 
+    # Map finish reason
     fr = ip["details"].get("finish_reason", "none")
     finish_reason = reasons_dict.get(fr, fr)
+
+    # Retrieve token counts
+    in_tokens = len(ip["details"].get("prefill", ""))
+    out_tokens = ip["details"].get("generated_tokens", 0)
 
     op = {
         "id": f"chatcmpl-{generate_fake_id()}",
         "object": "text_completion",
         "created": int(time.time()),
-        "model": "Llama2",
+        "model": "Unknown",
         "choices": [
             {
                 "text": ip.get("generated_text", ""),
@@ -130,9 +134,9 @@ def textAnsTGItoOpenAI(ip: Any, cfg: dict = {}) -> Any:
             }
         ],
         "usage": {
-            "prompt_tokens": 5,
-            "completion_tokens": ip["details"].get("generated_tokens", 0),
-            "total_tokens": 12,
+            "prompt_tokens": in_tokens,
+            "completion_tokens": out_tokens,
+            "total_tokens": in_tokens + out_tokens,
         },
     }
     return op
@@ -157,11 +161,11 @@ def chatReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
         "inputs": prompt,
         "parameters": {
             "best_of": ip.get("best_of", 1),
-            "decoder_input_details": False,
-            "details": True,
+            "decoder_input_details": True,
+            "details": False,
             "do_sample": False,
             "max_new_tokens": ip.get("max_tokens", 512),
-            "repetition_penalty": 1.03,
+            "repetition_penalty": ip.get("frequency_penalty", 1.03),
             "return_full_text": False,
             "seed": 0,
             "stop": ip.get("stop", stops),
@@ -181,8 +185,6 @@ def chatReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
 def chatAnsTGItoOpenAI(ip: Any, cfg: dict = {}) -> Any:
     """Converts a payload from TGI format"""
 
-    # TODO compute tokens, check finish reasons values
-
     reasons_dict = {
         "stop_sequence": "stop",
         "length": "length",
@@ -190,23 +192,29 @@ def chatAnsTGItoOpenAI(ip: Any, cfg: dict = {}) -> Any:
         "none": "none",
     }
 
+    # Map finish reason
     fr = ip["details"].get("finish_reason", "none")
     finish_reason = reasons_dict.get(fr, fr)
 
-    answer = ip.get("generated_text", "")
-
     # Check if the answers contains a stop token, and remove it
+    answer = ip.get("generated_text", "")
     if fr == "stop_sequence":
         stop = cfg["template"].get("user", None)
         if stop and answer.endswith(stop):
             answer = answer[: -len(stop)]
 
+    # Compute id
     id = ip.get("id", f"chatcmpl-{generate_fake_id()}")
+
+    # Retrieve token counts
+    in_tokens = len(ip["details"].get("prefill", ""))
+    out_tokens = ip["details"].get("generated_tokens", 0)
 
     op = {
         "id": id,
         "object": "chat.completion",
         "created": int(time.time()),
+        "model": "Unknown",
         "choices": [
             {
                 "index": 0,
@@ -217,10 +225,11 @@ def chatAnsTGItoOpenAI(ip: Any, cfg: dict = {}) -> Any:
                 "finish_reason": finish_reason,
             }
         ],
-        "usage": {"prompt_tokens": 9, "completion_tokens": 12, "total_tokens": 21},
+        "usage": {
+            "prompt_tokens": in_tokens,
+            "completion_tokens": out_tokens,
+            "total_tokens": in_tokens + out_tokens,
+        },
     }
-
-    if finish_reason == "stop_sequence":
-        pass
 
     return op
