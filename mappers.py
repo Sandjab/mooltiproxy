@@ -115,7 +115,7 @@ def textAnsTGItoOpenAI(ip: Any, config: dict = None) -> Any:
     finish_reason = reasons_dict.get(fr, fr)
 
     op = {
-        "id": "cmpl-uqkvlQyYK7bGYrRHQ0eXlWi7",
+        "id": f"chatcmpl-{generate_fake_id()}",
         "object": "text_completion",
         "created": int(time.time()),
         "model": "Llama2",
