@@ -208,13 +208,13 @@ def load_config(config_file_name: str) -> Any:
             "Master key found in config file. This is a security risk that is not recommended."
         )
         utils.alert(
-            "Please consider removing the master key from the config file and use the environment variable SANDJAB_PROXY_KEY instead."
+            "Please consider removing the master key from the config file and use the environment variable MOOLTIPROXY_KEY instead."
         )
         config["masterkey"] = config["system"]["masterkey"]
     else:
-        master_key = os.getenv("SANDJAB_PROXY_KEY")
+        master_key = os.getenv("MOOLTIPROXY_KEY")
         if not master_key:
-            utils.fatal("Environment variable SANDJAB_PROXY_KEY not set.")
+            utils.fatal("Environment variable MOOLTIPROXY_KEY not set.")
             utils.fatal(
                 "For obvious security reasons, you MUST define this variable before running the proxy."
             )
