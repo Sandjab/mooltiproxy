@@ -52,7 +52,7 @@ targets:
   #
   # TODO: Add HTTP Method filtering because now POST, GET and INFO are (hopefully gracefully) handled in the same way
 
-  # * OpenAI official API
+  # * Exemple with OpenAI official API, where it's just a pass through
   openai: 
     url: https://api.openai.com/v1
     envkey: YOUR_OPENAI_API_KEY_ENVIRONMENT_VARIABLE_NAME
@@ -63,10 +63,12 @@ targets:
       /chat/completions:
 
   # * An example with Hugging Face TGI serving a Llama2-Chat model on runpod
-  cheepo:
+  runpod1:
     url: https://your_runpod_machine-80.proxy.runpod.net
     preserveMethod: true  # needed for runpod
     mapping:
+      # These are pass-throughs if you still want to provide the original endpoints
+      # Delete them if you don't need them    
       /health:
       /info:
       /:
@@ -74,6 +76,8 @@ targets:
       /generate_stream:
       /metrics:
 
+      # These are the OpenAI endpoints that will be exposed by the proxy
+      # and transcoded to and from TGI
       /completions:
         path: /generate
         in: textReqOpenAItoTGI
@@ -84,6 +88,60 @@ targets:
         in: chatReqOpenAItoTGI
         out: chatAnsTGItoOpenAI
         prompter: llama2_chat
+
+  # * An example with Hugging Face TGI serving a Llama2 (no chat) model
+  target1:
+    url: http://your_url:port
+    mapping:
+      # These are pass-throughs if you still want to provide the original endpoints
+      # Delete them if you don't need them    
+      /health:
+      /info:
+      /:
+      /generate:
+      /generate_stream:
+      /metrics:
+
+      # These are the OpenAI endpoints that will be exposed by the proxy
+      # and transcoded to and from TGI
+      /completions:
+        path: /generate
+        in: textReqOpenAItoTGI
+        out: textAnsTGItoOpenAI
+
+      /chat/completions:
+        path: /generate
+        in: chatReqOpenAItoTGI
+        out: chatAnsTGItoOpenAI
+        prompter: fromTemplate
+        template: HumanResponse
+
+  # * An example with Hugging Face TGI serving a Falcon Instruct model
+  target2:
+    url: http://your_url:port
+    mapping:
+      # These are pass-throughs if you still want to provide the original endpoints
+      # Delete them if you don't need them
+      /health:
+      /info:
+      /:
+      /generate:
+      /generate_stream:
+      /metrics:
+
+      # These are the OpenAI endpoints that will be exposed by the proxy
+      # and transcoded to and from TGI
+      /completions:
+        path: /generate
+        in: textReqOpenAItoTGI
+        out: textAnsTGItoOpenAI
+
+      /chat/completions:
+        path: /generate
+        in: chatReqOpenAItoTGI
+        out: chatAnsTGItoOpenAI
+        prompter: fromTemplate
+        template: Instruct
 
 
 # list of prompt templates to transform a list of prompts 
@@ -96,13 +154,6 @@ templates:
     system: "\n### SYSTEM:\n"
     user: "\n### HUMAN:\n"
     assistant: "\n### RESPONSE:\n"
-
-  Pygmalion:
-    preprompt: "{{Char}}' Persona: "
-    start: "\n<START>"
-    system: "\nSystem: "
-    user: "\nYou: "
-    assistant: "\n{Char}: "
 
   FalconInstruct:
     preprompt: ""
