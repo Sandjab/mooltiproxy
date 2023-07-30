@@ -149,9 +149,9 @@ targets:
 # i.e. a single string input with custom separators
 templates:
   HumanResponse:
-    preprompt: "### SYSTEM:\n"
+    preprompt: ""
     start: ""
-    system: "\n### SYSTEM:\n"
+    system: ""
     user: "\n### HUMAN:\n"
     assistant: "\n### RESPONSE:\n"
 
