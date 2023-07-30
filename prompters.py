@@ -28,7 +28,6 @@ DEFAULT_SYSTEM_PROMPT = """You are a helpful, respectful and honest assistant. A
 
 # Build a prompt from a prompt template and a list of messages
 def fromTemplate(messages: list[dict], cfg: dict) -> (str, str):
-    print("fromTemplate In")
     if not messages:
         return ""
     i = 0
@@ -48,8 +47,6 @@ def fromTemplate(messages: list[dict], cfg: dict) -> (str, str):
             prompt += template[role] + content
 
     prompt += template["assistant"]
-
-    print("fromTemplate Out")
 
     return prompt, [template["user"]]
 
