@@ -47,6 +47,8 @@ targets:
   #       - path: the target endpoint path to use (optional, default to the incoming endpoint path)
   #       - in: the transcoding to apply to the incoming request body (optional, default to identity)
   #       - out: the transcoding to apply to the target response body (optional, default to identity)
+  #       - prompter: the prompter.function to use to transform a list of messages into a string (optional, default to no prompter)
+  #       - template: the prompt template to use (optional, default to no template, disregarded if prompter does not use templates)
   #
   # TODO: Add HTTP Method filtering because now POST, GET and INFO are (hopefully gracefully) handled in the same way
 
@@ -63,7 +65,7 @@ targets:
   # * An example with Hugging Face TGI serving a Llama2-Chat model on runpod
   cheepo:
     url: https://your_runpod_machine-80.proxy.runpod.net
-    preserveMethod: true  # needed to pass through cloudflare
+    preserveMethod: true  # needed for runpod
     mapping:
       /health:
       /info:
@@ -81,15 +83,13 @@ targets:
         path: /generate
         in: chatReqOpenAItoTGI
         out: chatAnsTGItoOpenAI
-        prompt: llama2
+        prompter: llama2_chat
 
 
 # list of prompt templates to transform a list of prompts 
 # with associated roles into a text completion input
 # i.e. a single string input with custom separators
-# TODO (not used yet, for now, prompters are functions)
-
-prompts:
+templates:
   HumanResponse:
     preprompt: "### SYSTEM:\n"
     start: ""
@@ -103,3 +103,10 @@ prompts:
     system: "\nSystem: "
     user: "\nYou: "
     assistant: "\n{Char}: "
+
+  FalconInstruct:
+    preprompt: ""
+    start: ""
+    system: ""
+    user: ">>>QUESTION<<<"
+    assistant: ">>>ANSWER<<<"    

@@ -133,21 +133,24 @@ class ProxyHandler(BaseHTTPRequestHandler):
                     f"Original request payload: {json.dumps(json_in_data, indent=2)}"
                 )
 
-            # get the mapping function name and the prompter function name if any
+            # get the mapping function name, the prompter function name and the template if any
             func_name = endpoint_config["in"]
-            prompt_name = (
-                endpoint_config["prompt"] if "prompt" in endpoint_config else None
-            )
+            prompter_name = endpoint_config.get("prompter", None)
+            template = endpoint_config.get("template", None)
 
-            if prompt_name:
-                utils.debug(
-                    f"Mapping input with {func_name}, using prompt {prompt_name}"
-                )
-            else:
-                utils.debug(f"Mapping input with {func_name}")
+            logstr = f"Mapping input with {func_name}"
+            if prompter_name:
+                logstr += f", using prompt {prompter_name}"
+
+            if template:
+                logstr += f" and template {template['template_name']}"
+
+            utils.info(logstr)
 
             # perform the mapping
-            target_json_in_data = getattr(mappers, func_name)(json_in_data, prompt_name)
+            target_json_in_data = getattr(mappers, func_name)(
+                json_in_data, endpoint_config
+            )
 
             if G_debug:
                 utils.debug(
@@ -393,8 +396,8 @@ if __name__ == "__main__":
     G_master_key = config["masterkey"]
     G_timeout = config["system"]["timeout"]
 
-    # if G_debug:
-    #     utils.debug("Configuration:\n" + json.dumps(config, indent=2))
+    if G_debug:
+        utils.debug("Configuration:\n" + json.dumps(config, indent=2))
 
     # Create the Cerbere instance
     cerbere = Cerbere(config["cerbere"])

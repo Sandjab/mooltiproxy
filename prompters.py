@@ -27,10 +27,13 @@ DEFAULT_SYSTEM_PROMPT = """You are a helpful, respectful and honest assistant. A
 
 
 # Build a prompt from a prompt template and a list of messages
-def fromTemplate(messages: list[dict], template: dict) -> str:
+def fromTemplate(messages: list[dict], cfg: dict) -> (str, str):
+    print("fromTemplate In")
     if not messages:
         return ""
     i = 0
+
+    template = cfg["template"]
 
     if messages[0]["role"] == "system":
         prompt = template["preprompt"] + messages[0]["content"] + template["start"]
@@ -46,36 +49,14 @@ def fromTemplate(messages: list[dict], template: dict) -> str:
 
     prompt += template["assistant"]
 
+    print("fromTemplate Out")
+
     return prompt, [template["user"]]
-
-
-def HumanResponse(messages: list[dict]) -> str:
-    template = {
-        "preprompt": "### SYSTEM:\n",
-        "start": "",
-        "system": "\n### SYSTEM:\n",
-        "user": "\n### HUMAN:\n",
-        "assistant": "\n### RESPONSE:\n",
-    }
-
-    return fromTemplate(messages, template)
-
-
-def Instruct(messages: list[dict]) -> str:
-    template = {
-        "preprompt": "",
-        "start": "",
-        "system": "",
-        "user": ">>>QUESTION<<<",
-        "assistant": ">>>ANSWER<<<",
-    }
-
-    return fromTemplate(messages, template)
 
 
 # Specific prompter for Llama-2
 # Official Llama-2 chat has a very specific prompt format
-def llama2_chat(messages: list[dict]) -> str:
+def llama2_chat(messages: list[dict], cfg: dict = {}) -> (str, str):
     if not messages:
         return ""
 
@@ -114,5 +95,5 @@ if __name__ == "__main__":
         {"role": "user", "content": "tell me a joke"},
     ]
     print("-------------------------------")
-    print(HumanResponse(messages))
+    print(llama2_chat(messages))
     print("-------------------------------")

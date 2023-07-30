@@ -126,11 +126,15 @@ def load_config(config_file_name: str) -> Any:
         # Check if the function name exists in the "prompters" module and is callable
         if hasattr(prompters, value) and callable(getattr(prompters, value)):
             return value
-        # Check if the prompt name exists in the config prompts list
-        elif config["prompts"].get(value):
-            return config["prompts"][value]
         else:
-            raise vol.Invalid(f"Function 'mappers.{value}' not found or not callable")
+            raise vol.Invalid(f"Function 'prompters.{value}' not found or not callable")
+
+    def validate_template(value):
+        # Check if the template name exists in the config templates list
+        if config["templates"].get(value):
+            return value
+        else:
+            raise vol.Invalid(f"Template '{value}' not found in templates list")
 
     try:
         with open(config_file_name) as f:
@@ -147,7 +151,8 @@ def load_config(config_file_name: str) -> Any:
             vol.Optional("path"): str,
             vol.Optional("in"): vol.All(str, validate_mapper),
             vol.Optional("out"): vol.All(str, validate_mapper),
-            vol.Optional("prompt"): vol.All(str, validate_prompter),
+            vol.Optional("prompter"): vol.All(str, validate_prompter),
+            vol.Optional("template"): vol.All(str, validate_template),
             # vol.Optional(str): str,
         }
     )
@@ -178,7 +183,7 @@ def load_config(config_file_name: str) -> Any:
                     },
                 },
             },
-            vol.Optional("prompts"): {
+            vol.Optional("templates"): {
                 vol.Optional(str): {
                     vol.Required("preprompt", default=""): str,
                     vol.Optional("start", default=""): str,
@@ -202,7 +207,6 @@ def load_config(config_file_name: str) -> Any:
 
     # Enrich the validated config
     # First, add the master proxy key
-
     if "masterkey" in config["system"]:
         utils.alert(
             "Master key found in config file. This is a security risk that is not recommended."
@@ -239,4 +243,22 @@ def load_config(config_file_name: str) -> Any:
             config["targets"][target]["key"] = os.getenv(
                 config["targets"][target]["envkey"]
             )
+
+    # Then instanciate prompts templates at the endpoint level, to avoid having to pass it at runtime
+    for targetname in config["targets"]:
+        # skip the default target
+        if targetname == "default":
+            continue
+        targetmapping = config["targets"][targetname].get("mapping", {})
+        for endpointname in targetmapping:
+            endpointconfig = targetmapping[endpointname]
+            if endpointconfig and type(endpointconfig) is dict:
+                templatename = endpointconfig.get("template", None)
+                if templatename:
+                    config["targets"][targetname]["mapping"][endpointname][
+                        "template"
+                    ] = config["templates"][templatename] | {
+                        "template_name": templatename
+                    }
+
     return config

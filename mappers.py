@@ -25,11 +25,13 @@ SOFTWARE.
 # *
 # * This file contains the functions that map the source api to the target one, and back
 # * To add a new target or source api, add the corresponding functions here
-# * Though not mandatory, it is recommended to adopt the following naming convention:
-# * - <prefix>Req<Source>to<Target> for the request mapper
+# * Though not mandatory, it is recommended to adopt the following naming convention and signature:
+# * - <prefix>Req<Source>to<Target>(ip:Any, cfg:dict) for the request mapper
+#     where prefix indicates the type of endpoint used (e.g. text completion, chat completion, etc.)
+#     ip is the input payload, and cfg is the endpoint configuration dictionary
 # * - <prefix>Ans<Target>to<Source> for the answer mapper
-# * where prefix indicates the type of endpoint used (e.g. text completion, chat completion, etc.)
-# *
+#     where prefix indicates the type of endpoint used (e.g. text completion, chat completion, etc.),
+#     ip is the input payload, and cfg is the endpoint configuration dictionary
 
 from typing import Any
 import prompters
@@ -40,7 +42,7 @@ import random
 # Help function to generate an OpenAI-like id
 def generate_fake_id() -> str:
     # generate a 28 chars long id, with the current timestamp encoded as prefix
-    # ! this is fake id whose uniquenss is not guaranteed
+    # ! this is a fake id whose uniqueness is not guaranteed
     PUSH_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     L = len(PUSH_CHARS)
     id = ""
@@ -58,16 +60,16 @@ def generate_fake_id() -> str:
 
 
 # Pure paththrough function, to test prompter code branch
-def identity(ip: Any, prompter: str = None) -> Any:
+def identity(ip: Any, cfg: dict = {}) -> Any:
     """Identity function"""
     return ip
 
 
 # * Input Conversion from an OpenAI text completion request to a TGI text completion request
-def textReqOpenAItoTGI(ip: Any, prompter: str) -> Any:
+def textReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
     """Converts a payload to TGI format"""
     # TODO Mapping of presence_penalty and frequency_penalty to repetition_penalty
-    # TODO Mappoing of typical_p
+    # TODO Mapping of typical_p
 
     # * Sanity Checks
     # temperature can be O for OpenAI, but must be strictly positive for TGI
@@ -100,7 +102,7 @@ def textReqOpenAItoTGI(ip: Any, prompter: str) -> Any:
 
 
 # * Output conversion from a TGI text completion answer to an OpenAI text completion answer
-def textAnsTGItoOpenAI(ip: Any, config: dict = None) -> Any:
+def textAnsTGItoOpenAI(ip: Any, cfg: dict = {}) -> Any:
     """Converts a payload from TGI format"""
     # TODO compute tokens, check finish reasons values
 
@@ -137,7 +139,7 @@ def textAnsTGItoOpenAI(ip: Any, config: dict = None) -> Any:
 
 
 # * Input Conversion from an OpenAI chat completion request to a TGI chat completion request
-def chatReqOpenAItoTGI(ip: Any, prompter: str) -> Any:
+def chatReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
     """Converts a payload to TGI format"""
     # TODO Mapping of presence_penalty and frequency_penalty to repetition_penalty
     # TODO Mapping of typical_p
@@ -148,7 +150,8 @@ def chatReqOpenAItoTGI(ip: Any, prompter: str) -> Any:
     if temperature <= 0:
         temperature = 0.01
 
-    prompt, stops = getattr(prompters, prompter)(ip.get("messages", ([], "")))
+    prompter = cfg.get("prompter", "fromTemplate")
+    prompt, stops = getattr(prompters, prompter)(ip.get("messages", []), cfg)
 
     op = {
         "inputs": prompt,
@@ -175,7 +178,7 @@ def chatReqOpenAItoTGI(ip: Any, prompter: str) -> Any:
 
 
 # * Output conversion from a TGI chat completion answer to an OpenAI chat completion answer
-def chatAnsTGItoOpenAI(ip: Any, config: dict = None) -> Any:
+def chatAnsTGItoOpenAI(ip: Any, cfg: dict = {}) -> Any:
     """Converts a payload from TGI format"""
 
     # TODO compute tokens, check finish reasons values
