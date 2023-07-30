@@ -194,6 +194,13 @@ def chatAnsTGItoOpenAI(ip: Any, cfg: dict = {}) -> Any:
     finish_reason = reasons_dict.get(fr, fr)
 
     answer = ip.get("generated_text", "")
+
+    # Check if the answers contains a stop token, and remove it
+    if fr == "stop_sequence":
+        stop = cfg["template"].get("user", None)
+        if stop and answer.endswith(stop):
+            answer = answer[: -len(stop)]
+
     id = ip.get("id", f"chatcmpl-{generate_fake_id()}")
 
     op = {
