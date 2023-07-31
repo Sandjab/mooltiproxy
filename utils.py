@@ -185,11 +185,12 @@ def load_config(config_file_name: str) -> Any:
             },
             vol.Optional("templates"): {
                 vol.Optional(str): {
-                    vol.Required("preprompt", default=""): str,
+                    vol.Optional("preprompt", default=""): str,
                     vol.Optional("start", default=""): str,
                     vol.Optional("system", default=""): str,
                     vol.Optional("user", default=""): str,
                     vol.Optional("assistant", default=""): str,
+                    vol.Optional(str): str,
                 }
             },
         }
