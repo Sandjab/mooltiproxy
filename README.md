@@ -49,7 +49,7 @@ The proxy won't allow you to expose its endpoint to the outside world without a 
 
 The recommended method is to set the environment variable `MOOLTIPROXY_KEY` to the value of your choice (a string long enough and not easily guessable).
 
-An alternate method is to set it in `system.masterkey` entry of the `config.yaml` file (see below), but this should be used only for testing purposes, and the proxy will bug you with security recommandations until you use the recommended method.
+An alternate method is to set it in `system.masterkey` entry of the `config.yaml` file (see below), but this should be used only for testing purposes, and the proxy will bug you with security recommendations until you use the recommended method.
 
 ## Proxy configuration file
 
