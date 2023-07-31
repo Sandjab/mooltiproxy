@@ -53,7 +53,7 @@ An alternate method is to set it in `system.masterkey` entry of the `config.yaml
 
 ## Proxy configuration file
 
-Copy the `config.template.yaml` file into a `config.yaml` file, and edit it according to your need. The entries names, included comments and examples should be clear enough to understand the purpose of each line.
+Copy the `config.template.yaml` file into a `config.yaml` file, and edit it according to your needs. The entries names, included comments and examples should be clear enough to understand the purpose of each line.
 
 _Note: I may enrich this paragraph based on user feedback, if any._
 
