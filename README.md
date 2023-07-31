@@ -12,9 +12,9 @@
 
 ### A minimalistic HTTP proxy with URL mapping and body translation
 
-Mooltiproxy is an abstraction layer allowing to expose one API endpoints while adressing another API in the background. It can thus be seen as an API translation proxy.
+Mooltiproxy is an abstraction layer allowing to expose one API while adressing another API in the background. It can thus be seen as an API translation proxy.
 
-It is a pico-framework (can't even name it micro or nano) with very basic features, and being a personal pet project, it obiously cannot compete with more complete solutions, but it is self-contained with minimal dependencies (requests for serving requests, pyyaml and voluputous for config file validation), and as such allows to **rapidly experiment switching from one api to another without changing your client code**.
+It is a pico-framework (can't even name it micro or nano) with very basic features, and being a personal pet project, it obviously cannot compete with more complete solutions, but it is self-contained with minimal dependencies, and as such allows to **rapidly experiment switching from one api to another without changing your client code**.
 
 Mooltiproxy has initially been designed for exposing OpenAI-like api endpoints, while actually using Hugging Face Text Generation Inference (TGI) endpoints, and as such **(it allows to switch from openAI to Open LLMs without changing your client code, whether you are using openai python bindings, LangChain, or even direct http requests)**, but can be used for other purposes.
 
