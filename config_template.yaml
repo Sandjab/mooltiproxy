@@ -12,12 +12,11 @@ system:
 
 cerbere:
   # maximum number of tries before blocking an ip address (optional, default to 3)
+  # The ban last for all the proxy life. To unban, restart the proxy (sorry)
   max_tries: 5
   # IP address Whitelist and blacklist (optional)
-  whitelist: # a list of ip addresses
-    - X.Y.Z.T 
-    - A.B.C.D
-  blacklist: []
+  whitelist: [] # a list of ip addresses
+  blacklist: [] # a list of ip addresses
 
 targets:
   # Name of the target to use by default if no target is specified in request header (mandatory)
@@ -35,7 +34,7 @@ targets:
   #
   # * preserveMethod: during http permanent redirections (301), POST method is normally converted to GET, which may be a problem
   # *                 if the target endpoint only supports POST. If preserveMethod is set to true,
-  # *                 the original method is preserved (optional, default to false)
+  # *                 the original method is preserved (optional, default to false).
   #
   # * mapping is mandatory and defines the supported incoming endpoints:
   #   - Each mapping entry defines how to map an incoming endpoint path
@@ -50,8 +49,7 @@ targets:
   #       - prompter: the prompter.function to use to transform a list of messages into a string (optional, default to no prompter)
   #       - template: the prompt template to use (optional, default to no template, disregarded if prompter does not use templates)
   #
-  # TODO: Add HTTP Method filtering because now POST, GET and INFO are (hopefully gracefully) handled in the same way
-
+  
   # * Exemple with OpenAI official API, where it's just a pass through
   openai: 
     url: https://api.openai.com/v1
