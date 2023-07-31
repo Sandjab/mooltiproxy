@@ -75,6 +75,7 @@ def textReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
     if temperature <= 0:
         temperature = 0.01
 
+    # build the output payload
     op = {
         "inputs": ip.get("prompt", ""),
         "parameters": {
