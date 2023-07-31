@@ -141,7 +141,7 @@ targets:
         in: chatReqOpenAItoTGI
         out: chatAnsTGItoOpenAI
         prompter: fromTemplate
-        template: Instruct
+        template: FalconInstruct
 
 
 # list of prompt templates to transform a list of prompts 
