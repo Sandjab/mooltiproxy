@@ -20,7 +20,7 @@ Mooltiproxy has initially been designed for exposing openAI-like api endpoints, 
 
 Mooltiproxy offers the following features:
 
-- Bearer token authorization
+- Bearer token authorization with basic security features (ip ban, whitelist, blacklist)
 - endpoint routing
 - request and answer body mapping
 
@@ -34,12 +34,57 @@ Clone this repository and install the dependencies in your python _(virtual)_ en
 
 # Extensions
 
-Mooltiproxy comes with built-in mapping back and forth mapping between OpenAI and TGI, but to support other translations, you need to write your own mapping functions.
+Mooltiproxy comes with built-in back-and-forth mapping between OpenAI and TGI, but to support other translations, you'll need to write your own mapping functions, that can then be specified in the _config.yaml_ file, and will be automatically invoked by the proxy main loop.
 
-Such functions must be added into the mappers.py file.
+Such functions must be added into the mappers.py file, and their signature must be as follow:
+`def yourfunctionname(ip: Any, cfg: dict = {}) -> Any`, where ip is the input payload, and cfg is the co,figuration endpoint object as specifiad in the `config.yaml`` file.
+
+Though not mandatory, it is also recommended to adopt the following naming convention:
+
+- `<prefix>Req<Source>to<Target>` for the request mapper
+- `<prefix>Ans<Target>to<Source>` for the answer mapper
+
+where prefix is a free string indicating the type of endpoint used, and Source and Target identify the source and target apis.
+
+_Here is an exemple for mapping an OpenAI text completion request to a TGI text completion requests (basically building the output payload from the input payload, setting default values, and adding some logic if a one-to-one mapping is not possible, or if some value transformations are needed):_
+
+```python
+def textReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
+    """Converts a payload to TGI format"""
+
+    # * Sanity Checks
+    # temperature can be O for OpenAI, but must be strictly positive for TGI
+    temperature = ip.get("temperature", 0.5)
+    if temperature <= 0:
+        temperature = 0.01
+
+    # build the output payload
+    op = {
+        "inputs": ip.get("prompt", ""),
+        "parameters": {
+            "best_of": ip.get("best_of", 1),
+            "decoder_input_details": True,
+            "details": False,
+            "do_sample": False,
+            "max_new_tokens": ip.get("max_tokens", 20),
+            "repetition_penalty": ip.get("frequency_penalty", 1.03),
+            "return_full_text": False,
+            "seed": 0,
+            "stop": ip.get("stop", []),
+            "temperature": ip.get("temperature", 0.5),
+            "top_k": ip.get("top_k", 10),
+            "top_p": ip.get("top_p", 0.95),
+            "truncate": None,
+            "typical_p": 0.95,
+            "watermark": False,
+        },
+    }
+
+    return op
+```
 
 # Limitations
 
 - Does not support streaming apis (yet)
-- Does not support certificated exchange
+- Does not support certificate exchange for authentication
 - Not designed to support traffic
