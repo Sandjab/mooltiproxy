@@ -68,7 +68,6 @@ def identity(ip: Any, cfg: dict = {}) -> Any:
 # * Input Conversion from an OpenAI text completion request to a TGI text completion request
 def textReqOpenAItoTGI(ip: Any, cfg: dict = {}) -> Any:
     """Converts a payload to TGI format"""
-    # TODO Mapping of typical_p
 
     # * Sanity Checks
     # temperature can be O for OpenAI, but must be strictly positive for TGI
