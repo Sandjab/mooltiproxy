@@ -27,14 +27,13 @@ SOFTWARE.
 
 
 class Cerbere:
-    trials = 3
-    blacklist = {}
-    whitelist = {}
-    suspect = {}
-
     # Create instance by initializing the blacklist and whitelist from the config object
     def __init__(self, config: dict):
         self.trials = config["max_tries"]
+        self.blacklist = {}
+        self.whitelist = {}
+        self.suspect = {}
+
         for ip in config["blacklist"]:
             self.blacklist[ip] = True
 
@@ -61,3 +60,5 @@ class Cerbere:
             if self.suspect[ip] >= self.trials:
                 self.blacklist[ip] = True
                 return True
+
+        return False

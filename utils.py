@@ -138,7 +138,7 @@ def load_config(config_file_name: str) -> Any:
 
     try:
         with open(config_file_name) as f:
-            config = yaml.load(f, Loader=yaml.FullLoader)
+            config = yaml.load(f, Loader=yaml.SafeLoader)
     except IOError as e:
         utils.error(f"Can't load configuration file: {config_file_name}")
         utils.error(f"Cause : {e}")

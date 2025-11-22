@@ -36,7 +36,7 @@ SOFTWARE.
 from typing import Any
 import prompters
 import time
-import random
+import secrets
 
 
 # Help function to generate an OpenAI-like id
@@ -54,7 +54,7 @@ def generate_fake_id() -> str:
         if ts < 1:
             break
     for i in range(28 - len(id)):
-        id += random.choice(PUSH_CHARS)
+        id += secrets.choice(PUSH_CHARS)
 
     return id
 

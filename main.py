@@ -283,7 +283,7 @@ class ProxyHandler(BaseHTTPRequestHandler):
             if cerbere.blacklisted(self.client_address[0]):
                 self.error_reply(
                     403,
-                    {"status": "error", "reason": "Go fuck yourself"},
+                    {"status": "error", "reason": "Access denied - IP blocked"},
                     "Blacklisted IP",
                     "alert",
                 )
