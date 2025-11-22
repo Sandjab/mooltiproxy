@@ -25,14 +25,36 @@ SOFTWARE.
 # * Minimal helper class for managing ip whitelist and blacklist
 # *
 
+from typing import Dict, Any
+
 
 class Cerbere:
-    # Create instance by initializing the blacklist and whitelist from the config object
-    def __init__(self, config: dict):
-        self.trials = config["max_tries"]
-        self.blacklist = {}
-        self.whitelist = {}
-        self.suspect = {}
+    """
+    IP-based access control manager.
+
+    Manages IP whitelists, blacklists, and automatic banning based on
+    failed authentication attempts.
+
+    Attributes:
+        trials: Maximum failed attempts before IP is banned
+        blacklist: Dictionary of banned IP addresses
+        whitelist: Dictionary of trusted IP addresses (never banned)
+        suspect: Dictionary tracking failed attempts per IP
+    """
+    def __init__(self, config: Dict[str, Any]) -> None:
+        """
+        Initialize Cerbere with configuration.
+
+        Args:
+            config: Configuration dictionary containing:
+                - max_tries: Maximum failed attempts before ban
+                - blacklist: List of IPs to block
+                - whitelist: List of IPs to trust
+        """
+        self.trials: int = config["max_tries"]
+        self.blacklist: Dict[str, bool] = {}
+        self.whitelist: Dict[str, bool] = {}
+        self.suspect: Dict[str, int] = {}
 
         for ip in config["blacklist"]:
             self.blacklist[ip] = True
@@ -40,17 +62,44 @@ class Cerbere:
         for ip in config["whitelist"]:
             self.whitelist[ip] = True
 
-    # Test if an ip is blacklisted
     def blacklisted(self, ip: str) -> bool:
+        """
+        Check if an IP address is blacklisted.
+
+        Args:
+            ip: IP address to check
+
+        Returns:
+            True if IP is blacklisted, False otherwise
+        """
         return ip in self.blacklist
 
-    # Test if an ip is whitelisted
     def whitelisted(self, ip: str) -> bool:
+        """
+        Check if an IP address is whitelisted.
+
+        Args:
+            ip: IP address to check
+
+        Returns:
+            True if IP is whitelisted, False otherwise
+        """
         return ip in self.whitelist
 
-    # Test and ip for suspicious activity
-    # and blacklit it if it exceeds the number of trials
     def watch(self, ip: str) -> bool:
+        """
+        Track failed authentication attempts and ban if threshold exceeded.
+
+        Whitelisted IPs are never banned. For non-whitelisted IPs,
+        increments the failure counter and bans the IP if it exceeds
+        the configured maximum tries.
+
+        Args:
+            ip: IP address to track
+
+        Returns:
+            True if IP was just banned, False otherwise
+        """
         if ip not in self.whitelist:
             if not ip in self.suspect:
                 self.suspect[ip] = 0

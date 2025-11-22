@@ -22,12 +22,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import List, Dict, Tuple, Any
+
 # if not preprompt is provided, this default prompt will be used
 DEFAULT_SYSTEM_PROMPT = """You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."""
 
 
-# Build a prompt from a prompt template and a list of messages
-def fromTemplate(messages: list[dict], cfg: dict) -> (str, str):
+def fromTemplate(messages: List[Dict[str, str]], cfg: Dict[str, Any]) -> Tuple[str, List[str]]:
+    """
+    Build a prompt from a template and list of messages.
+
+    Converts a list of chat messages with roles into a single formatted
+    prompt string using the template specified in the configuration.
+
+    Args:
+        messages: List of message dictionaries with 'role' and 'content' keys.
+                  First message can optionally have role='system'.
+        cfg: Configuration dictionary containing 'template' with formatting strings.
+
+    Returns:
+        Tuple containing:
+            - Formatted prompt string
+            - List of stop sequences (typically contains the user message prefix)
+
+    Example:
+        >>> messages = [
+        ...     {"role": "system", "content": "You are helpful"},
+        ...     {"role": "user", "content": "Hello"}
+        ... ]
+        >>> prompt, stops = fromTemplate(messages, config)
+    """
     if not messages:
         return ""
     i = 0
@@ -51,9 +75,31 @@ def fromTemplate(messages: list[dict], cfg: dict) -> (str, str):
     return prompt, [template["user"]]
 
 
-# Specific prompter for Llama-2
-# Official Llama-2 chat has a very specific prompt format
-def llama2_chat(messages: list[dict], cfg: dict = {}) -> (str, str):
+def llama2_chat(messages: List[Dict[str, str]], cfg: Dict[str, Any] = {}) -> Tuple[str, List[str]]:
+    """
+    Format messages for Llama-2-Chat models.
+
+    Llama-2-Chat uses a specific prompt format with special tokens:
+    - <s> and </s> for beginning/end of sequence
+    - [INST] and [/INST] for instruction boundaries
+    - <<SYS>> and <</SYS>> for system message
+
+    Args:
+        messages: List of message dictionaries with 'role' and 'content' keys.
+                  Should alternate between user and assistant roles.
+        cfg: Configuration dictionary (optional, not used in this function).
+
+    Returns:
+        Tuple containing:
+            - Formatted prompt string with Llama-2-Chat special tokens
+            - List of stop sequences ([B_INST])
+
+    Example:
+        >>> messages = [
+        ...     {"role": "user", "content": "Hello"}
+        ... ]
+        >>> prompt, stops = llama2_chat(messages)
+    """
     if not messages:
         return ""
 

@@ -1,3 +1,5 @@
-pyyaml
-requests
-voluptuous
+# Production dependencies
+# Pin versions for reproducible builds
+pyyaml>=6.0,<7.0
+requests>=2.31.0,<3.0
+voluptuous>=0.14.0,<1.0
