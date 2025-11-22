@@ -45,8 +45,34 @@ Comprehensive documentation is available in the following files:
 - **[IMPROVEMENTS.md](IMPROVEMENTS.md)** - Specific improvement proposals with code examples
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guide for contributing to the project
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
+- **[DOCKER.md](DOCKER.md)** - Docker deployment guide
 
 # Installation
+
+## Option 1: Docker (Recommended)
+
+The easiest way to run Mooltiproxy is with Docker:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Sandjab/mooltiproxy.git
+cd mooltiproxy
+
+# 2. Create configuration file
+cp config_template.yaml config.yaml
+# Edit config.yaml with your settings
+
+# 3. Set environment variables
+cp .env.example .env
+# Edit .env and set MOOLTIPROXY_KEY
+
+# 4. Run with Docker Compose
+docker-compose up -d
+```
+
+See **[DOCKER.md](DOCKER.md)** for complete Docker deployment guide.
+
+## Option 2: Python Virtual Environment
 
 Clone this repository and install the dependencies in your python _(virtual)_ environment
 

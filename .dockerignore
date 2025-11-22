@@ -1,0 +1,80 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Documentation
+*.md
+docs/
+ARCHITECTURE.md
+CODE_REVIEW.md
+IMPROVEMENTS.md
+REVIEW_SUMMARY.md
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Development files
+requirements-dev.txt
+pytest.ini
+.pre-commit-config.yaml
+
+# Test files
+tests/
+test_*.py
+
+# Config files (will be mounted)
+config.yaml
+
+# Certificates (will be mounted if needed)
+certificates/
+
+# Logs
+logs/
+*.log
+
+# Docker files (don't need them in the image)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+tmp/
+temp/

@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  mooltiproxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mooltiproxy
+    image: mooltiproxy:latest
+
+    # Port mapping
+    ports:
+      - "${PROXY_PORT:-8000}:8000"
+
+    # Environment variables
+    environment:
+      - MOOLTIPROXY_KEY=${MOOLTIPROXY_KEY}
+      # Add any target API keys here
+      # - YOUR_OPENAI_API_KEY=${YOUR_OPENAI_API_KEY}
+      # - YOUR_TGI_API_KEY=${YOUR_TGI_API_KEY}
+
+    # Mount configuration file
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      # Optional: Mount certificates for SSL/TLS
+      # - ./certificates:/app/certificates:ro
+      # Optional: Mount for logs
+      # - ./logs:/app/logs
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    # Resource limits (optional)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1.0'
+    #       memory: 512M
+    #     reservations:
+    #       cpus: '0.5'
+    #       memory: 256M
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Network configuration
+    networks:
+      - mooltiproxy-network
+
+# Networks
+networks:
+  mooltiproxy-network:
+    driver: bridge
+
+# Optional: Volumes for persistence
+# volumes:
+#   mooltiproxy-logs:
+#   mooltiproxy-certs:
