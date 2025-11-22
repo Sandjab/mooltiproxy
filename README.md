@@ -45,7 +45,8 @@ Comprehensive documentation is available in the following files:
 - **[IMPROVEMENTS.md](IMPROVEMENTS.md)** - Specific improvement proposals with code examples
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guide for contributing to the project
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
-- **[DOCKER.md](DOCKER.md)** - Docker deployment guide
+- **[DOCKER.md](DOCKER.md)** - Docker deployment guide (Linux/macOS)
+- **[DOCKER_WINDOWS.md](DOCKER_WINDOWS.md)** - Docker installation & deployment guide for Windows 11
 
 # Installation
 
@@ -70,7 +71,9 @@ cp .env.example .env
 docker-compose up -d
 ```
 
-See **[DOCKER.md](DOCKER.md)** for complete Docker deployment guide.
+**Platform-Specific Guides:**
+- **Windows 11 Users:** See **[DOCKER_WINDOWS.md](DOCKER_WINDOWS.md)** for complete installation guide
+- **Linux/macOS Users:** See **[DOCKER.md](DOCKER.md)** for complete Docker deployment guide
 
 ## Option 2: Python Virtual Environment
 

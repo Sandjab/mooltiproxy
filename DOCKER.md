@@ -2,6 +2,8 @@
 
 This guide covers deploying Mooltiproxy using Docker and Docker Compose.
 
+> **Windows Users:** See **[DOCKER_WINDOWS.md](DOCKER_WINDOWS.md)** for a complete Windows 11 installation guide including Docker Desktop setup, WSL2 configuration, and step-by-step deployment instructions.
+
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
@@ -24,6 +26,12 @@ This guide covers deploying Mooltiproxy using Docker and Docker Compose.
 - Docker Compose 2.0+ installed (optional, for docker-compose deployment)
 - Configuration file (`config.yaml`)
 - Master proxy key
+
+### Platform-Specific Installation
+
+- **Windows 11:** See [DOCKER_WINDOWS.md](DOCKER_WINDOWS.md)
+- **macOS:** Install [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
+- **Linux:** Install [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 ---
 
