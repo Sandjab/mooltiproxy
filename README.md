@@ -35,6 +35,17 @@ So it can be used for instance:
 
 or a combination of all the above.
 
+# Documentation
+
+Comprehensive documentation is available in the following files:
+
+- **[REVIEW_SUMMARY.md](REVIEW_SUMMARY.md)** - Executive summary of code review and project status
+- **[CODE_REVIEW.md](CODE_REVIEW.md)** - Detailed code review findings and issues
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Complete architecture documentation and design
+- **[IMPROVEMENTS.md](IMPROVEMENTS.md)** - Specific improvement proposals with code examples
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guide for contributing to the project
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
+
 # Installation
 
 Clone this repository and install the dependencies in your python _(virtual)_ environment
