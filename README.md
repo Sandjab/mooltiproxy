@@ -8,9 +8,15 @@
 [![dependency - pyyaml](https://img.shields.io/badge/dependency-pyyaml-blue?logo=python&logoColor=white)](https://pypi.org/project/pyyaml)
 [![dependency - voluptuous](https://img.shields.io/badge/dependency-voluptuous-blue?logo=python&logoColor=white)](https://pypi.org/project/voluptuous)
 
+> [!CAUTION]
+> **mooltiproxy is a week-end side project, it was developped mid 2023 and has not been maintained since.**
+> It was useful to me back when there was no standardized interface to the various LLM servers. But since then, things have been rationalized. So it may no longer be useful, except from an educational perspective.
+> Features may be incomplete or broken. There is no support, no documentation guarantees, and no warranty of any kind. Use at your own risk.
+
+
 # MOOLTIPROXY
 
-### A minimalistic HTTP proxy with URL mapping and body translation
+### A minimalistic HTTP proxy with URL mapping and body translation for LLMs
 
 Mooltiproxy is an abstraction layer allowing to expose one API while adressing another API in the background. It can thus be seen as an API translation proxy.
 
